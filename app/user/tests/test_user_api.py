@@ -142,7 +142,7 @@ class PrivateUserApiTests(TestCase):
         response = self.client.get(ME_URL)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.DATA, {
+        self.assertEqual(response.data, {
             'name': self.user.name,
             'email': self.user.email
         })
