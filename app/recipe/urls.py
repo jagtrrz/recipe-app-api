@@ -1,15 +1,21 @@
 """
 URL mappings for the recipe API.
 """
-from django.urls import path
+from django.urls import (
+    path,
+    include,
+)
 
-from user import views
+from rest_framework.routers import DefaultRouter
+
+from recipe import views
 
 
-# app_name = 'user'
+router = DefaultRouter()
+router.register('recipes', views.RecipeViewSet)
 
-# urlpatterns = [
-#     path('create/', views.CreateUserView.as_view(), name='create'),
-#     path('token/', views.CreateTokenView.as_view(), name='token'),
-#     path('me/', views.ManageUserView.as_view(), name='me'),
-# ]
+app_name = 'recipe'
+
+urlpatterns = [
+    path('', include(router.urls)),
+]
