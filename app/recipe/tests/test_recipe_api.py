@@ -385,6 +385,55 @@ class PrivateRecipeApiTests(TestCase):
         self.assertEqual(recipe.ingredients.count(), 0)
         self.assertNotIn(ingredient, recipe.ingredients.all())
 
+    def test_filter_recipes_by_tag(self):
+        first_recipe = create_recipe(user=self.user, title="First Recipe")
+        second_recipe = create_recipe(user=self.user, title="Second Recipe")
+        third_recipe = create_recipe(user=self.user, title="Third Recipe")
+
+        first_tag = Tag.objects.create(name='FirstTag', user=self.user)
+        second_tag = Tag.objects.create(name='SecondTag', user=self.user)
+
+        first_recipe.tags.add(first_tag)
+        second_recipe.tags.add(second_tag)
+
+        params = {'tags': f'{first_tag.id},{second_tag.id}'}
+
+        response = self.client.get(RECIPES_URL, params)
+
+        first_serializer = RecipeSerializer(first_recipe)
+        second_serializer = RecipeSerializer(second_recipe)
+        third_serializer = RecipeSerializer(third_recipe)
+
+        self.assertIn(first_serializer.data, response.data)
+        self.assertIn(second_serializer.data, response.data)
+        self.assertNotIn(third_serializer.data, response.data)
+
+    def test_filter_recipes_by_ingredients(self):
+        first_recipe = create_recipe(user=self.user, title="First Recipe")
+        second_recipe = create_recipe(user=self.user, title="Second Recipe")
+        third_recipe = create_recipe(user=self.user, title="Third Recipe")
+
+        first_ingredient = Ingredient.objects.create(name='FirstIngredient',
+                                                     user=self.user)
+        second_ingredient = Ingredient.objects.create(name='SecondIngredient',
+                                                      user=self.user)
+
+        first_recipe.ingredients.add(first_ingredient)
+        second_recipe.ingredients.add(second_ingredient)
+
+        params = {'ingredients': f'{first_ingredient.id},'
+                                 f'{second_ingredient.id}'}
+
+        response = self.client.get(RECIPES_URL, params)
+
+        first_serializer = RecipeSerializer(first_recipe)
+        second_serializer = RecipeSerializer(second_recipe)
+        third_serializer = RecipeSerializer(third_recipe)
+
+        self.assertIn(first_serializer.data, response.data)
+        self.assertIn(second_serializer.data, response.data)
+        self.assertNotIn(third_serializer.data, response.data)
+
 
 class ImageUploadTests(TestCase):
 
