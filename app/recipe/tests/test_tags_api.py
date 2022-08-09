@@ -1,6 +1,3 @@
-"""
-Test for the tags api
-"""
 from decimal import Decimal
 
 from django.contrib.auth import get_user_model
@@ -24,7 +21,6 @@ TAGS_URL = reverse('recipe:tag-list')
 
 
 def detail_url(tag_id):
-    """Create and return a tag- detail URL."""
     return reverse('recipe:tag-detail', args=[tag_id])
 
 
@@ -38,20 +34,17 @@ def create_user(email='test@test.com', password='test'):
 
 
 class PublicTagsApiTests(TestCase):
-    """Test unauthenticated API requests."""
 
     def setUp(self):
         self.client = APIClient()
 
     def test_auth_required(self):
-        """Test auth is required to call API."""
         response = self.client.get(TAGS_URL)
 
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
 
 class PrivateTagsApiTests(TestCase):
-    """Test authenticated API requests."""
 
     def setUp(self):
         self.client = APIClient()
@@ -59,7 +52,6 @@ class PrivateTagsApiTests(TestCase):
         self.client.force_authenticate(self.user)
 
     def test_retrieve_tags(self):
-        """Test retrieving a list of tags."""
         Tag.objects.create(user=self.user, name='test1')
         Tag.objects.create(user=self.user, name='test2')
 
@@ -72,7 +64,6 @@ class PrivateTagsApiTests(TestCase):
         self.assertEqual(response.data, serializer.data)
 
     def test_tag_list_limited_to_user(self):
-        """Test list of tags is limited to authenticated user."""
         other_user = create_user(email='other@example.com', password='test123')
 
         Tag.objects.create(user=other_user, name='test user 2')
@@ -85,7 +76,6 @@ class PrivateTagsApiTests(TestCase):
         self.assertEqual(response.data[0]['id'], tag.id)
 
     def test_update_tag(self):
-        """ Test updating tags """
         tag = Tag.objects.create(user=self.user, name='test2')
 
         payload = {
@@ -100,7 +90,6 @@ class PrivateTagsApiTests(TestCase):
         self.assertEqual(tag.name, payload['name'])
 
     def test_delete_tag(self):
-        """Test deleting a tag."""
         tag = Tag.objects.create(user=self.user, name='Breakfast')
 
         url = detail_url(tag.id)

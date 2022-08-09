@@ -20,7 +20,6 @@ INGREDIENTS_URL = reverse('recipe:ingredient-list')
 
 
 def detail_url(ingredient_id):
-    """Create and return a tag- detail URL."""
     return reverse('recipe:ingredient-detail', args=[ingredient_id])
 
 
@@ -34,20 +33,17 @@ def create_user(email='test@test.com', password='test123'):
 
 
 class PublicIngredientsApiTests(TestCase):
-    """Test unauthenticated API requests."""
 
     def setUp(self):
         self.client = APIClient()
 
     def test_auth_required(self):
-        """Test auth is required to call API."""
         response = self.client.get(INGREDIENTS_URL)
 
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
 
 class PrivateIngredientsApiTests(TestCase):
-    """Test authenticated API requests."""
 
     def setUp(self):
         self.client = APIClient()
